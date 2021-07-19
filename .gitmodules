@@ -1,0 +1,3 @@
+[submodule "toiot-sink-node-driver"]
+	path = toiot-sink-node-driver
+	url = https://github.com/SSU-NC/toiot-sink-node-driver.git
