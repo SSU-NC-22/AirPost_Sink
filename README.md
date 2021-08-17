@@ -4,7 +4,7 @@ AirPost sink node code. Collect sensor values from sensor nodes and send to Kafk
 
 ## Guide
 
-1. Please follow S/W Settings below.
+1. First, please follow S/W Settings below.
 
 2. If your ready with requirements, run your toiot-sink-node server with command below. Option --b, --k, --w needs to be filled.
 
