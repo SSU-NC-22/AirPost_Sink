@@ -59,7 +59,7 @@ class MqttMessages:
         for i in range(len(temp)):
             temp[i]['id'] = str(temp[i]['id'])
             topic = "data/" + temp[i]['id']
-            self.nodes.append(int(temp[i]['id']))
+            self.nodes.append(str(temp[i]['id']))
             self.ping_receive.append(("ping/" + temp[i]['id']))
             self.add_mqtt_topic(topic, self.vos)
 

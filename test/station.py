@@ -59,20 +59,26 @@ mqtt.subscribe("data/"+client_id, handler)
 
 
 while True:	
+	# msgs = {
+	# 	"node_id": client_id,
+	# 	"values": {
+	# 		"temp": None,
+	# 		"humid": None,
+	# 		"light": None,
+
+    #         "lat": None,
+	# 		"lon": None,
+    #    		"alt": None,
+
+	# 		"clear": None,
+	# 		"status": 0,
+	# 	},
+	# 	"timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	# }
+
 	msgs = {
-		"node_id": client_id,
-		"values": {
-			"temp": None,
-			"humid": None,
-			"light": None,
-
-            "lat": None,
-			"lon": None,
-       		"alt": None,
-
-			"clear": None,
-			"status": 0,
-		},
+		"node_id": 1,
+		"values": [ 0, 0, 0, 0, 0 ],
 		"timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 	}
 	

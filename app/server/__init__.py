@@ -36,7 +36,8 @@ def send_message_to_kafka(msg):
     # payload = msg.payload.decode().split(',')  # 싱크노드에서 오는 데이터형식은 일렬로 #, #, #, ... 으로 온다. 컴마로 쪼개서 리스트로 저장.
     # kafka_message = topic_manager.kafka_message(v_topic, payload)  # 첫번째 인자로 센서의 id 전송. payload는 리스트로 저장된 센서값들
     kafka_message = msg.payload.decode() # dict 형식으로 변환
-    topic_manager.add_node(int(v_topic[1])) # 카프카로 보낼때 센서 노드 추가
+    kafka_message = eval(kafka_message)
+    topic_manager.add_node(str(v_topic[1])) # 카프카로 보낼때 센서 노드 추가
     # topic_manager.add_sensor(int(v_topic[1]), int(payload[0])) # 노드 id, 센서 id 넣어서 일치 시 센서 추가
     # if topic_manager.sensor_check(v_topic[1], payload):
     if len(topic_manager.get_nodes()) > 0:
@@ -80,9 +81,9 @@ def mqtt_run():
     client.on_disconnect = on_disconnect
     client.connect(args.b, 1883)
     client.loop_start()
-    client.message_callback_add("data/#", data_callback)
+    client.message_callback_add('data/#', data_callback)
     client.message_callback_add("command/uplink/#", command_callback)
-    client.subscribe("data/#")
+    client.subscribe('data/#')
     client.subscribe("command/uplink/#")
 
     return http_response_code['success200']
@@ -117,7 +118,7 @@ def health_check_handler():
 
 
 app = Flask(__name__)
-producer = KafkaProducer(bootstrap_servers=[args.k+':9092'], api_version=(0, 10, 2, 0), value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+producer = KafkaProducer(acks=0, compression_type='gzip', bootstrap_servers=[args.k+':9092'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 topic_manager = MqttMessages()
 client = mqtt.Client()
 app.debug = False
