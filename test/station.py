@@ -66,9 +66,9 @@ while True:
 			"humid": None,
 			"light": None,
 
-			"lat": None,
+            "lat": None,
 			"lon": None,
-			"alt": None,
+       		"alt": None,
 
 			"clear": None,
 			"status": 0,
