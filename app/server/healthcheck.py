@@ -32,7 +32,7 @@ class HealthCheck:
     def setup_target_nodelist(self, nodelist):
         self.target_nodelist = dict()
         for nodeid in nodelist:
-            self.target_nodelist[nodeid] = {'state': False, 'battery': 255}
+            self.target_nodelist[nodeid] = {'state': True, 'battery': 255}
 
     def set_node_state(self, nodeid, state, battery):
         if int(nodeid) in self.target_nodelist:

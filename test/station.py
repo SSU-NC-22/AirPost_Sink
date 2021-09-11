@@ -49,7 +49,7 @@ def Handler():
 
 broker = '58.230.119.87'
 port = 9708
-client_id = 'STA11111'
+client_id = 'STA4'
 
 handler = Handler()
 mqtt = MQTT(broker, port, client_id)
@@ -77,8 +77,9 @@ while True:
 	# }
 
 	msgs = {
-		"node_id": 1,
-		"values": [ 0, 0, 0, 0, 0 ],
+		# "sensor_id": 1,
+		"node_id": client_id,
+		"values": [ 0, 1, 2, 3, 4 ],
 		"timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 	}
 	
