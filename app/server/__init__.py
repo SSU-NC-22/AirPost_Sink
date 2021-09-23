@@ -35,8 +35,8 @@ def send_message_to_kafka(msg):
     v_topic = msg.topic.split('/')  # 토픽이 data/# 이런식으로 오면 쪼개서 [data, #]으로 저장
     # payload = msg.payload.decode().split(',')  # 싱크노드에서 오는 데이터형식은 일렬로 #, #, #, ... 으로 온다. 컴마로 쪼개서 리스트로 저장.
     # kafka_message = topic_manager.kafka_message(v_topic, payload)  # 첫번째 인자로 센서의 id 전송. payload는 리스트로 저장된 센서값들
-    kafka_message = msg.payload.decode() # dict 형식으로 변환
-    kafka_message = eval(kafka_message)
+    kafka_message = msg.payload.decode() 
+    kafka_message = json.loads(kafka_message) # dict 형식으로 변환
     topic_manager.add_node(str(v_topic[1])) # 카프카로 보낼때 센서 노드 추가
     # topic_manager.add_sensor(int(v_topic[1]), int(payload[0])) # 노드 id, 센서 id 넣어서 일치 시 센서 추가
     # if topic_manager.sensor_check(v_topic[1], payload):
@@ -171,11 +171,10 @@ def delete_node(node):
     return http_response_code['success200']
 
 # handle actuator
-
-
 @app.route('/actuator', methods=['GET', 'POST'])
 def actuator_command():
     json_data = request.get_json(silent=True)
+    print(type(json_data), "type of data")
     actuator.send_req(client, json_data)
     return http_response_code['success200']
 
