@@ -11,7 +11,6 @@ Other topics can be additionally managed
 
 
 class MqttMessages:
-    # sensors = []
     nodes = []
     ping_receive = []
     mqtt_topic = []
@@ -22,14 +21,6 @@ class MqttMessages:
 
     def __init__(self):
         self.ping_message_format = []
-
-    # def kafka_message(self, v_topic, payload):
-    #     payload[1:] = list(map(float, payload[1:]))
-    #     kafka_msg = {'node_id': int(v_topic[1]), 'values': payload[1:],
-    #                  'timestamp': str(datetime.datetime.now())[0:19]}
-    #     #temp = json.dumps(kafka_msg).encode('utf-8')
-    #     temp = kafka_msg
-    #     return temp
 
     def set_vos(self, number):
         self.vos = number
@@ -44,13 +35,6 @@ class MqttMessages:
         else:
             return False
 
-    # def add_sensor(self, nodeid, sensorid):
-    #     for sensor in self.sensors:
-    #         if sensor['id'] == nodeid:
-    #             sensor['sensors']['id'] = sensorid
-    #             return True
-    #         else:
-    #             return False
 
     def get_message_format(self, format):
         self.clear_topics()
@@ -63,18 +47,12 @@ class MqttMessages:
             self.ping_receive.append(("ping/" + temp[i]['id']))
             self.add_mqtt_topic(topic, self.vos)
 
-    # def sensor_check(self, nodeid, payload):
-    #     for sensor in self.sensors:
-    #         if sensor['id'] == nodeid:
-    #             for sensorid in sensor['sensors']:
-    #                 if str(sensorid['id']) == payload[0]:
-    #                     return True
-    #     return False
 
     def add_mqtt_topic(self, topic, vos):
         self.topics.append(topic)
         topic = (topic, vos)
         self.mqtt_topic.append(topic)
+
 
     def get_delete_node(self, nodeid):
         self.delete_topic = []
@@ -86,13 +64,6 @@ class MqttMessages:
                 print(self.delete_topic)
         return self.delete_topic
 
-    # def get_delete_sensor(self, sensorid):
-    #     for i in range(len(self.topics)):
-    #         v_topic = self.topics[i].split('/')
-    #         if v_topic[2] == sensorid:
-    #             delete_topic = self.topics[i]
-    #             return delete_topic
-    #     return v_topic
 
     def clear_topics(self):
         self.mqtt_topic = []

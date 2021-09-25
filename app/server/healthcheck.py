@@ -13,7 +13,7 @@ class HealthCheck:
     # default time
     def __init__(self):
         self.target_nodelist = {}
-        self.time = 1
+        self.time = 5
         self.ping_message = "ping time:" + str(self.time)
         self.health_check_mode = False
 
@@ -35,8 +35,8 @@ class HealthCheck:
             self.target_nodelist[nodeid] = {'state': True, 'battery': 255}
 
     def set_node_state(self, nodeid, state, battery):
-        if int(nodeid) in self.target_nodelist:
-            self.target_nodelist[int(nodeid)] = {'state': state, 'battery': battery}
+        if nodeid in self.target_nodelist:
+            self.target_nodelist[nodeid] = {'state': state, 'battery': battery}
             return True  # success
         else:
             return False  # error
@@ -49,7 +49,7 @@ class HealthCheck:
     def create_msg(self):
         json_msg = dict()
         state_list = list()
-        json_msg['sid'] = dev_info.get_id()
+        json_msg['sid'] = dev_info.get_id() # sink id
 
         for nodeid in self.target_nodelist:  # nodeid is key
             state_list += [{'nid': nodeid, 'state': self.target_nodelist[nodeid]['state'], 'battery':self.target_nodelist[nodeid]['battery']}]

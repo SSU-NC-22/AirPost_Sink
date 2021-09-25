@@ -31,23 +31,17 @@ def on_message(client, userdata, message):
 # 할 일 : 메시지 받아서 카프카로 전송하는 메시지 형식 변경 필요 mqtt_message.py 파일 수정.
 # give message to kafka as kafka producer
 def send_message_to_kafka(msg):
-    ### Look ###
-    v_topic = msg.topic.split('/')  # 토픽이 data/# 이런식으로 오면 쪼개서 [data, #]으로 저장
-    # payload = msg.payload.decode().split(',')  # 싱크노드에서 오는 데이터형식은 일렬로 #, #, #, ... 으로 온다. 컴마로 쪼개서 리스트로 저장.
-    # kafka_message = topic_manager.kafka_message(v_topic, payload)  # 첫번째 인자로 센서의 id 전송. payload는 리스트로 저장된 센서값들
+    v_topic = msg.topic.split('/')              # 토픽이 data/# 이런식으로 오면 쪼개서 [data, #]으로 저장 #은 노드 이름
     kafka_message = msg.payload.decode() 
     kafka_message = json.loads(kafka_message) # dict 형식으로 변환
     topic_manager.add_node(str(v_topic[1])) # 카프카로 보낼때 센서 노드 추가
-    # topic_manager.add_sensor(int(v_topic[1]), int(payload[0])) # 노드 id, 센서 id 넣어서 일치 시 센서 추가
-    # if topic_manager.sensor_check(v_topic[1], payload):
     if len(topic_manager.get_nodes()) > 0:
-        '''
         if health_check.get_health_check_mode():
-            if(health_check.set_node_state(v_topic[1], True)):
+            if(health_check.set_node_state(v_topic[1], True), 100):
                 print("health check: ", v_topic[1], "->True")
             else:
                 print("This node is not healthcheck target: ",v_topic[1])
-        '''
+
         print("data by mqtt: sending message to kafka : %s" % msg)
         print(kafka_message)
         
@@ -62,9 +56,8 @@ def handle_uplink_command(msg):
         json_msg = json.loads(str(msg.payload.decode()))
         health_check.set_node_state(v_topic[3], True, json_msg['battery'])
 
+
 # callbacks
-
-
 def data_callback(client, userdata, msg):
     return send_message_to_kafka(msg)
 
@@ -106,13 +99,11 @@ def health_check_handler():
 
             print("healthcheck target: ", topic_manager.get_nodes())
 
-            ### Look ###
             health_check.setup_target_nodelist(topic_manager.get_nodes())
             health_check.send_req(client)
             time.sleep(health_check.get_time())
             print("health_check: Send Json to HealthCheck Server...")
             client_socket.sendall(health_check.create_msg())
-            ###      ###
 
 # start the node webserver
 
@@ -156,15 +147,7 @@ def response_getMessageFormat():
     print(topic_manager.mqtt_topic)
     return http_response_code['success200']
 
-
-# delete sensor
-@app.route('/sensor/<node>/<sensor>', methods=['GET', 'DELETE'])
-def delete_sensor(sensor):
-    client.unsubscribe(topic_manager.get_delete_sensor(sensor))
-    return http_response_code['success200']
-
-
-# delete arduino board
+# delete node
 @app.route('/node/<node>', methods=['GET', 'DELETE'])
 def delete_node(node):
     client.unsubscribe(topic_manager.get_delete_node(node))
