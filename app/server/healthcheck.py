@@ -32,11 +32,19 @@ class HealthCheck:
     def setup_target_nodelist(self, nodelist):
         self.target_nodelist = dict()
         for nodeid in nodelist:
-            self.target_nodelist[nodeid] = {'state': True, 'battery': 255}
+            self.target_nodelist[nodeid] = {'state': True,
+                                            'battery': 0,
+                                            'lat':0,
+                                            'long':0,
+                                            'alt':0}
 
-    def set_node_state(self, nodeid, state, battery):
+    def set_node_state(self, nodeid, state, json_msg):
         if nodeid in self.target_nodelist:
-            self.target_nodelist[nodeid] = {'state': state, 'battery': battery}
+            self.target_nodelist[nodeid] = {'state': state,
+                                            'battery': json_msg['battery'],
+                                            'lat':json_msg['lat'],
+                                            'long':json_msg['long'],
+                                            'alt':json_msg['alt']}
             return True  # success
         else:
             return False  # error
@@ -52,7 +60,12 @@ class HealthCheck:
         json_msg['sid'] = dev_info.get_id() # sink id
 
         for nodeid in self.target_nodelist:  # nodeid is key
-            state_list += [{'nid': nodeid, 'state': self.target_nodelist[nodeid]['state'], 'battery':self.target_nodelist[nodeid]['battery']}]
+            state_list += [{'nid': nodeid,
+                            'state': self.target_nodelist[nodeid]['state'],
+                            'battery':self.target_nodelist[nodeid]['battery'],
+                            'lat':self.target_nodelist[nodeid]['lat'],
+                            'long':self.target_nodelist[nodeid]['long'],
+                            'alt':self.target_nodelist[nodeid]['alt']}]
         json_msg['state'] = state_list
 
         print(json_msg)

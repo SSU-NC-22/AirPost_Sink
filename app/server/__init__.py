@@ -35,18 +35,12 @@ def send_message_to_kafka(msg):
     kafka_message = msg.payload.decode() 
     kafka_message = json.loads(kafka_message) # dict 형식으로 변환
     topic_manager.add_node(str(v_topic[1])) # 카프카로 보낼때 센서 노드 추가
-    if len(topic_manager.get_nodes()) > 0:
-        if health_check.get_health_check_mode():
-            if(health_check.set_node_state(v_topic[1], True), 100):
-                print("health check: ", v_topic[1], "->True")
-            else:
-                print("This node is not healthcheck target: ",v_topic[1])
 
-        print("data by mqtt: sending message to kafka : %s" % msg)
-        print(kafka_message)
-        
-        producer.send("sensor-data", kafka_message)
-        producer.flush()
+    print("data by mqtt: sending message to kafka : %s" % msg)
+    print(kafka_message)
+    
+    producer.send("sensor-data", kafka_message)
+    producer.flush()
 
 
 def handle_uplink_command(msg):
@@ -54,7 +48,7 @@ def handle_uplink_command(msg):
     if v_topic[2] == 'DevStatusAns':
         print('Received DevStatusAns!')
         json_msg = json.loads(str(msg.payload.decode()))
-        health_check.set_node_state(v_topic[3], True, json_msg['battery'])
+        health_check.set_node_state(v_topic[3], True, json_msg)
 
 
 # callbacks
