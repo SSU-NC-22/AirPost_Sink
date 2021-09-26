@@ -63,9 +63,9 @@ class HealthCheck:
             state_list += [{'nid': nodeid,
                             'state': self.target_nodelist[nodeid]['state'],
                             'battery':self.target_nodelist[nodeid]['battery'],
-                            'lat':self.target_nodelist[nodeid]['lat'],
-                            'long':self.target_nodelist[nodeid]['long'],
-                            'alt':self.target_nodelist[nodeid]['alt']}]
+                            'location':[self.target_nodelist[nodeid]['lat'],
+                            self.target_nodelist[nodeid]['long'],
+                            self.target_nodelist[nodeid]['alt']]}]
         json_msg['state'] = state_list
 
         print(json_msg)
