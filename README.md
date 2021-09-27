@@ -1,6 +1,6 @@
 # AirPost_Sink
 
-AirPost sink node code. Collect sensor values from sensor nodes and send to Kafka producer server. Based on **[ toiot-sink-node-driver](https://github.com/SSU-NC/toiot-sink-node-driver)**. Any computer can be sink node server, but make sure firewalls and ports opened.
+AirPost sink node code. Collect sensor values from sensor nodes(Station, Drone)and send to Kafka producer server. Based on **[ toiot-sink-node-driver](https://github.com/SSU-NC/toiot-sink-node-driver)**. Any computer can be sink node server, but make sure firewalls and ports opened.
 
 ## Guide
 
