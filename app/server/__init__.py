@@ -155,6 +155,14 @@ def actuator_command():
     actuator.send_req(client, json_data)
     return http_response_code['success200']
 
+# handle actuator
+@app.route('/drone', methods=['GET', 'POST'])
+def drone_command():
+    json_data = request.get_json(silent=True)
+    print(type(json_data), "type of data")
+    actuator.send_req(client, json_data)
+    return http_response_code['success200']
+
 # error handlers
 
 
