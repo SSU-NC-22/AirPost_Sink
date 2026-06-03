@@ -19,6 +19,11 @@ from .setup import args
 
 def on_connect(client, userdata, flags, rc):
     print("connected to mqtt broker")
+    # Subscribe HERE, not right after connect(): connect() is async, so subscribing before the
+    # broker connection is established (CONNACK) loses the subscription and no messages ever arrive.
+    # Doing it in on_connect also re-subscribes automatically after any reconnect.
+    client.subscribe('data/#')
+    client.subscribe('command/uplink/#')
 
 
 def on_subscribe():
@@ -103,9 +108,18 @@ def health_check_handler():
 
 
 app = Flask(__name__)
-producer = KafkaProducer(acks=0, compression_type='gzip', bootstrap_servers=[args.k+':9092'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+# acks=1 (not 0): with acks=0 fire-and-forget, kafka-python silently drops messages against the
+# KRaft Kafka 4.x broker (verified — nothing reached the topic); acks=1 waits for the leader and
+# delivers reliably. gzip compression is fine.
+producer = KafkaProducer(acks=1, compression_type='gzip', bootstrap_servers=[args.k+':9092'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 topic_manager = MqttMessages()
-client = mqtt.Client()
+# paho-mqtt 2.x requires an explicit callback API version. Without it, message_callback_add() does
+# not deliver to the registered callbacks (the bridge silently stopped forwarding data/# -> Kafka).
+# The callbacks here use the v1 signatures, so pin VERSION1 (older paho lacks the enum -> fall back).
+try:
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
+except AttributeError:
+    client = mqtt.Client()
 app.debug = False
 #app.threaded = True
 health_check = HealthCheck()
