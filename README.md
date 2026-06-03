@@ -1,6 +1,35 @@
-# AirPost_Sink
+# AirPost_Sink — the telemetry bridge (MQTT → Kafka)
 
-AirPost sink node code. Collect sensor values from sensor nodes(Station, Drone)and send to Kafka producer server. Based on **[ toiot-sink-node-driver](https://github.com/SSU-NC/toiot-sink-node-driver)**. Any computer can be sink node server, but make sure firewalls and ports opened.
+This repository is the **data bridge** in the [AirPost](https://github.com/jsoone24/NC_AirPost)
+drone-delivery system. It sits between the many small devices (drones and stations) and the heavy data
+pipeline (Kafka → Elasticsearch → Kibana).
+
+## What it is, and why it exists
+
+The edge devices speak **MQTT** — a lightweight protocol perfect for tiny, intermittently-connected
+gadgets. The analytics backend speaks **Kafka** — a durable, high-throughput event stream built for
+storing and replaying millions of records. These two worlds don't talk to each other directly, and
+they *shouldn't*: you don't want every Raspberry Pi holding a Kafka connection.
+
+The **Sink** is the adapter that joins them:
+
+```
+Stations & Drones ──MQTT (lightweight, per-device)──►  SINK  ──Kafka (durable stream)──► logic-core → Elasticsearch → Kibana
+```
+
+It subscribes to the devices' sensor topics on the MQTT broker, and **republishes every reading into
+Kafka** for the backend to consume, enrich, rule on, and store. Any computer can be a sink node (it's
+just a forwarder) as long as it can reach both the MQTT broker and the Kafka broker — so the
+firewall/ports between them must be open.
+
+It is based on the lab's reusable **[toiot-sink-node-driver](https://github.com/SSU-NC/toiot-sink-node-driver)**.
+
+> In the [simulation](https://github.com/jsoone24/NC_AirPost/tree/main/simulation) this bridging is
+> done inline (the sim publishes telemetry straight to Kafka), so you only need a real Sink when
+> running physical devices.
+
+The rest of this README is the **setup and run guide** (mosquitto, the driver, and the `run.py`
+broker/Kafka/webserver arguments).
 
 ## Guide
 
