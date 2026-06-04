@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    name: Python compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        # Runtime deps the bridge imports (MQTT in, Kafka out, Flask control API).
+        run: pip install paho-mqtt kafka-python flask requests PyJWT simplejson
+
+      - name: Byte-compile sources
+        # Syntax-checks every module without running it. The server package has
+        # heavy import-time side effects (connects to MQTT/Kafka, needs CLI args),
+        # so a plain `import` is not a safe CI check — compileall is.
+        run: python -m compileall app test
